@@ -5,17 +5,23 @@ import Form from "react-bootstrap/Form";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 
-export default class VendorHome extends Component {
+export default class VendorAddProducts extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      username: "",
-      productid: "",
-      data: {}
+      username:"",
+      productname: "",
+      price: "",
+      quantity: "",
     };
-  }
 
+    this.onChangeProductName = this.onChangeProductName.bind(this);
+    this.onChangePrice = this.onChangePrice.bind(this);
+    this.onChangeQuantity= this.onChangeQuantity.bind(this);
+
+    this.onSubmit = this.onSubmit.bind(this);
+  }
   componentDidMount() {
     const newUser = {
       username: localStorage.getItem("username")
@@ -31,6 +37,42 @@ export default class VendorHome extends Component {
       });
   }
 
+  onChangeProductName(event) {
+    this.setState({ productname: event.target.value });
+  }
+
+  onChangePrice(event) {
+    this.setState({ price: event.target.value });
+  }
+
+  onChangeQuantity(event) {
+    this.setState({ quantity: event.target.value });
+  }
+
+  onSubmit(e) {
+    e.preventDefault();
+
+    const newProd = {
+      username: this.state.username,
+      productname: this.state.productname,
+      price: this.state.price,
+      quantity: this.state.quantity,
+      status:"notready"
+    };
+
+    axios.post("http://localhost:4000/addvendorproduct", newProd).then(res => {
+      if (res.data === 2) alert("Duplicate Product! Already exists");
+      else alert("Product succesfully added!")
+      console.log(res.data);
+    });
+
+    this.setState({
+      productname: "",
+      price: "",
+      quantity: "",
+    });
+  }
+
   render() {
     return (
       <div>
@@ -39,49 +81,26 @@ export default class VendorHome extends Component {
             <Nav.Link href="/">HOME</Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="/viewprod">View Prod</Nav.Link>
+            <Nav.Link href="/VendorAddProduct">Add Products</Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="/addprod">Add Prod</Nav.Link>
+            <Nav.Link href="/VendorViewProduct">View All</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="/dispatch">Dispatch</Nav.Link>
           </Nav.Item>
         </Nav>
-        <h1>Welcome {this.state.data.fullname} !</h1>
-
-        {/* <table className="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Full Name</th>
-                            <th>Email</th>
-                            <th>Username</th>
-                            <th>Password</th>
-                            <th>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    { 
-                        this.state.users.map((currentUser, i) => {
-                            return (
-                                <tr>
-                                    <td>{currentUser.fullname}</td>
-                                    <td>{currentUser.email}</td>
-                                    <td>{currentUser.username}</td>
-                                    <td>{currentUser.password}</td>
-                                    <td>{currentUser.type}</td>
-
-                                </tr>
-                            )
-                        })
-                    }
-                    </tbody>
-                </table> */}
+        
+        <h1>Add New Product</h1>
+        
         <Form onSubmit={this.onSubmit}>
           <div className="form-group">
             <label>Product Name: </label>
             <input
               type="text"
               className="form-control"
-              value={this.state.fullname}
-              onChange={this.onChangeFullname}
+              value={this.state.productname}
+              onChange={this.onChangeProductName}
             />
           </div>
           <div className="form-group">
@@ -89,8 +108,8 @@ export default class VendorHome extends Component {
             <input
               type="text"
               className="form-control"
-              value={this.state.email}
-              onChange={this.onChangeEmail}
+              value={this.state.price}
+              onChange={this.onChangePrice}
             />
           </div>
           <div className="form-group">
@@ -98,20 +117,12 @@ export default class VendorHome extends Component {
             <input
               type="text"
               className="form-control"
-              value={this.state.username}
-              onChange={this.onChangeUsername}
+              value={this.state.quantity}
+              onChange={this.onChangeQuantity}
             />
           </div>
-          <div className="form-group">
-            <label>Password: </label>
-            <input
-              type="password"
-              className="form-control"
-              value={this.state.password}
-              onChange={this.onChangePassword}
-            />
-          </div>
-          <Form.Group
+          
+          {/* <Form.Group
             controlId="exampleForm.ControlSelect1"
             value={this.state.type}
             onChange={this.onChangeType}
@@ -122,9 +133,10 @@ export default class VendorHome extends Component {
               <option value="vendor">vendor</option>
               <option value="customer">customer</option>
             </Form.Control>
-          </Form.Group>
+          </Form.Group> */}
           <div className="form-group">
-            <input type="submit" value="Register" className="btn btn-primary" />
+
+            <input type="submit" value="Add Product" className="btn btn-primary" />
           </div>
         </Form>
       </div>

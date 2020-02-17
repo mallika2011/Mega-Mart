@@ -39,10 +39,13 @@ export default class VendorHome extends Component {
             <Nav.Link href="/">HOME</Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="/viewprod">View Prod</Nav.Link>
+            <Nav.Link href="/VendorAddProduct">Add Products</Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="/addprod">Add Prod</Nav.Link>
+            <Nav.Link href="/VendorViewProduct">View All</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="/dispatch">Dispatch</Nav.Link>
           </Nav.Item>
         </Nav>
         <h1>Welcome {this.state.data.fullname} !</h1>

@@ -11,7 +11,7 @@ var bcrypt = require("bcrypt");
 var BCRYPT_SALT_ROUNDS = 12;
 
 let User = require("./models/user");
-let Vendor = require("./models/vendor");
+let Products = require("./models/products");
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -26,6 +26,8 @@ connection.once("open", function() {
 var Users = [];
 
 // API endpoints
+
+
 
 // Getting all the users
 userRoutes.route("/").get(function(req, res) {
@@ -50,7 +52,6 @@ userRoutes.route("/vendor").post(function(req, res) {
                 console.log("Not registered");
                 res.send("1");
             } else {
-                console.log("in api ", users);
                 res.json(users);
             }
         }
@@ -131,48 +132,33 @@ userRoutes.route("/:id").get(function(req, res) {
     });
 });
 
-userRoutes.route("/viewvendordetails").post(function(req, res) {
-    Vendor.find({ username: req.body.username }, function(err, vendors) {
-        if (err)
-            console.log(err);
-        else {
-            console.log("Pringting debug", vendors);
-            if (!vendors) {
-                //Not found
-                console.log("No Products");
-                res.send("1");
-            } else {
-                console.log("in api ", vendors);
-                res.json(vendors);
-            }
-        }
-    });
-});
+
 
 userRoutes.route("/addvendorproduct").post(function(req, res) {
-    let vendor = new Vendor(req.body);
+    let products = new Products(req.body);
     console.log("enterd", req.body)
 
-    Vendor.find({ username: req.body.username}, function(err, vendors) {
+    Products.find({ username: req.body.username}, function(err, p) {
         if (err)
             console.log(err);
         else {
-            if(vendors.length==0)
+            if(p.length==0)
             {
-                vendor.save()
-                .then(vendor => { res.status(200).json({ Vendor: "Product added successfully" }); })
+                products.save()
+                .then(products => { res.status(200).json({ Products: "Product added successfully" }); })
                 .catch(err => { res.status(400).send("Error"); });
             }
             else{
-                Vendor.find({ productname: req.body.productname }, function(err, vendors2) {
+                 console.log(p);
+                 Products.find({ productname: req.body.productname }, function(err, p2) {
                     if (err)
                         console.log(err);
                     else {
-                        if (vendors2.length!=0)
+                        if (p2.length!=0)
                             res.send("2");
                         else {
-                            vendor.save()
-                                .then(vendor => { res.status(200).json({ Vendor: "Product added successfully" }); })
+                            products.save()
+                                .then(products => { res.status(200).json({ Products: "Product added successfully" }); })
                                 .catch(err => { res.status(400).send("Error"); });
                         }
                     }
@@ -181,6 +167,26 @@ userRoutes.route("/addvendorproduct").post(function(req, res) {
         }
     });
     
+});
+
+userRoutes.route("/viewVendorProduct").post(function(req, res) {
+    console.log("I was called", req.body)
+    Products.find({ username: req.body.username }, function(err, p) {
+        if (err)
+            console.log(err);
+        else {
+            console.log("Pringting debug", p);
+            if (!p.length) {
+                //Not found
+                console.log("No Products");
+                res.send("1");
+            } 
+            else {
+                console.log("in api ", p);
+                res.json(p);
+            }
+        }
+    });
 });
 
 app.use("/", userRoutes);
