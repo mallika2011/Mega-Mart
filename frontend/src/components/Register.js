@@ -67,7 +67,7 @@ export default class Register extends Component {
       email: "",
       password: "",
       fullname: "",
-      type: ""
+      type: "vendor"
     });
   }
 

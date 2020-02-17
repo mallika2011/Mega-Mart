@@ -132,8 +132,6 @@ userRoutes.route("/:id").get(function(req, res) {
     });
 });
 
-
-
 userRoutes.route("/addvendorproduct").post(function(req, res) {
     let products = new Products(req.body);
     console.log("enterd", req.body)

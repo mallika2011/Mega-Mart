@@ -78,7 +78,7 @@ export default class VendorAddProducts extends Component {
       <div>
         <Nav variant="pills" defaultActiveKey="/home">
           <Nav.Item>
-            <Nav.Link href="/">HOME</Nav.Link>
+            <Nav.Link href="/VendorHome">HOME</Nav.Link>
           </Nav.Item>
           <Nav.Item>
             <Nav.Link href="/VendorAddProduct">Add Products</Nav.Link>

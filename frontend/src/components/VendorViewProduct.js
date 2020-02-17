@@ -6,32 +6,35 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 
 export default class VendorViewAll extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { prods: [] };
-      }
-    
-      componentDidMount() {
-        const newUser = {
-          username: localStorage.getItem("username")
-        };
-        // this.setState({ username: newUser.username });
-        axios
-          .post("http://localhost:4000/viewVendorProduct", newUser)
-          .then(response => {
-            this.setState({ prods: response.data });
-          })
-          .catch(function(error) {
-            console.log(error);
-          });
-      }
+  constructor(props) {
+      super(props);
+      this.state = { prods: [] };
+    }
+  
+    componentDidMount() {
+      const newUser = {
+        username: localStorage.getItem("username")
+      };
+      // this.setState({ username: newUser.username });
+      axios
+        .post("http://localhost:4000/viewVendorProduct", newUser)
+        .then(response => {
+          this.setState({ prods: response.data });
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
+  onDelEvent() {
+  this.props.onDelEvent(this.props.product);
+  }
 
   render() {
     return (
       <div>
         <Nav variant="pills" defaultActiveKey="/home">
           <Nav.Item>
-            <Nav.Link href="/">HOME</Nav.Link>
+            <Nav.Link href="/VendorHome">HOME</Nav.Link>
           </Nav.Item>
           <Nav.Item>
             <Nav.Link href="/VendorAddProduct">Add Products</Nav.Link>
@@ -63,6 +66,9 @@ export default class VendorViewAll extends Component {
                   <td>{p.price}</td>
                   <td>{p.quantity}</td>
                   <td>{p.status}</td>
+                  <td className="del-cell">
+                  <input type="button" value="X" className="del-btn"/>
+                  </td>
                 </tr>
               );
             })}
@@ -72,3 +78,7 @@ export default class VendorViewAll extends Component {
     );
   }
 }
+
+
+
+
