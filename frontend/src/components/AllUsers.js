@@ -27,6 +27,7 @@ export default class UsersList extends Component {
                             <th>Full Name</th>
                             <th>Email</th>
                             <th>Username</th>
+                            <th>Password</th>
                             <th>Type</th>
                         </tr>
                     </thead>
@@ -38,6 +39,7 @@ export default class UsersList extends Component {
                                     <td>{currentUser.fullname}</td>
                                     <td>{currentUser.email}</td>
                                     <td>{currentUser.username}</td>
+                                    <td>{currentUser.password}</td>
                                     <td>{currentUser.type}</td>
 
                                 </tr>

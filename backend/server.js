@@ -7,7 +7,12 @@ const app = express();
 const PORT = 4000;
 const userRoutes = express.Router();
 
+var bcrypt = require('bcrypt');
+var BCRYPT_SALT_ROUNDS = 12;
+
 let User = require('./models/user');
+
+var currentuser;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -42,29 +47,22 @@ userRoutes.route('/lookup').post(function(req, res) {
     if(!req.body.username || !req.body.password){
         res.send("0");
      } else {
-        User.find({username:req.body.username},function(err,users){
+        User.findOne({username:req.body.username},function(err,users){
             if (err) {
                 console.log(err);
             } 
             else {
-                if(users.length==0) //Not found 
+                if(!users) //Not found 
                 {
                     console.log("Not registered");
                     res.send("1");
                 }
                 else{
-                    // console.log("Not allwoing me to look for pwd");
-                    User.find({password:req.body.password},function(err,users2){
-                        if(err)
-                        {
-                            console.log(err);
-                        }
-                        else{
-                            if(users2.length==0)//not found
-                                res.send("2");
-                            else
-                                res.send("3"); //TODO: Redirect to appropriate page
-                        }
+                    users.comparePassword(req.body.password, function(err, isMatch) {
+                        if (err) throw err;
+                        console.log(req.body.password, isMatch); // -> Password123: true
+                        if(isMatch) res.send("3");
+                        else res.send("2");
                     });
                 }
             }
@@ -72,10 +70,12 @@ userRoutes.route('/lookup').post(function(req, res) {
      }
 });
 
+
 // Adding a new user
 userRoutes.route('/add').post(function(req, res) {
     console.log(req);   
     let user = new User(req.body);
+
     user.save()
         .then(user => {
             res.status(200).json({'User': 'User added successfully'});
