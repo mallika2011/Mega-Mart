@@ -1,46 +1,47 @@
-import React from 'react';
+import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap/dist/css/bootstrap.min.css";
 
-import UsersList from './components/AllUsers'
-import Register from './components/Register'
-import Login from './components/Login'
-import UserHome from './components/UserHome'
+import UsersList from "./AllUsers";
+import Register from "./Register";
+import Login from "./Login";
+import VendorHome from "./VendorHome";
+import CustomerHome from "./CustomerHome";
 
+export default class Home extends Component {
+  constructor(props) {
+    super(props);
+  }
 
-
-
-function App() {
-  return (
-    <Router>
-      <div className="container">
+  render() {
+    return (
+      <div>
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
-          <Link to="/" className="navbar-brand">Home</Link>
+          <Link to="/" className="navbar-brand">
+            Home
+          </Link>
           <div className="collapse navbar-collapse">
             <ul className="navbar-nav mr-auto">
               <li className="navbar-item">
-                <Link to="/allusers" className="nav-link">Users</Link>
+                <Link to="/allusers" className="nav-link">
+                  Users
+                </Link>
               </li>
               <li className="navbar-item">
-                <Link to="/login" className="nav-link">Login</Link>
+                <Link to="/login" className="nav-link">
+                  Login
+                </Link>
               </li>
               <li className="navbar-item">
-                <Link to="/register" className="nav-link">Register Now</Link>
+                <Link to="/register" className="nav-link">
+                  Register Now
+                </Link>
               </li>
             </ul>
           </div>
         </nav>
-
-        <br/>
-        <Route path="/allusers" exact component={UsersList}/>
-        <Route path="/register" component={Register}/>
-        <Route path="/login" component={Login}/>
-        <Route path="/UserHome" component={UserHome}/>
-
-
+        <h1>HOMEPAGE</h1>
       </div>
-    </Router>
-  );
+    );
+  }
 }
-
-export default App;

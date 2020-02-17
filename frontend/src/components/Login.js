@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+
 import axios from "axios";
 
 export default class Login extends Component {
@@ -32,23 +34,34 @@ export default class Login extends Component {
       password: this.state.password
     };
 
-    axios.post("http://localhost:4000/lookup", newUser).then(res => {
-      console.log(res.data);
-      if (res.data === 0) {
+    axios.post("http://localhost:4000/login", newUser).then(res => {
+      console.log("respons", res.data);
+      if (res.data.val === 0) {
         console.log("empty fields");
         alert("Please enter username and password");
-      } else if (res.data === 1) {
+      } else if (res.data.val === 1) {
         console.log("not registered");
         alert("You are not registered. Register Now!");
-      } else if (res.data === 2) {
+      } else if (res.data.val === 2) {
         console.log("incorrect password");
         alert("Incorrect Password! Try again.");
       }
-      if (res.data === 3) {
+      if (res.data.val === 3) {
         console.log("found");
-        this.props.history.push("/UserHome");
+        if(res.data.type === "vendor")
+          this.props.history.push("/VendorHome");
+        else 
+          this.props.history.push("/CustomerHome");
+          
       }
     });
+
+    /*
+     * Setup Local storage
+     */
+
+    localStorage.setItem("username", this.state.username);
+    localStorage.setItem("type", this.state.type);
 
     this.setState({
       username: "",
@@ -58,7 +71,24 @@ export default class Login extends Component {
 
   render() {
     return (
+      
       <div>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <Link to="/" className="navbar-brand">Home</Link>
+          <div className="collapse navbar-collapse">
+            <ul className="navbar-nav mr-auto">
+              <li className="navbar-item">
+                <Link to="/allusers" className="nav-link">Users</Link>
+              </li>
+              <li className="navbar-item">
+                <Link to="/login" className="nav-link">Login</Link>
+              </li>
+              <li className="navbar-item">
+                <Link to="/register" className="nav-link">Register Now</Link>
+              </li>
+            </ul>
+          </div>
+        </nav>
         <form onSubmit={this.onSubmit}>
           <div className="form-group">
             <label>USERNAME: </label>

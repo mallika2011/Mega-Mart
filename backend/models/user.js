@@ -5,22 +5,24 @@ const saltRounds = 10;
 
 const User = new mongoose.Schema({
   fullname: {
-    type: String
+    type: String,
+    required:true
   },
   email: {
-    type: String
+    type: String,
+    required:true
   },
   username: {
-    type: String
+    type: String,
+    required:true
   },
   password: {
-    type: String
+    type: String,
+    required:true
   },
   type: {
-    type: String
-  },
-  products: {
-    type: String
+    type: String,
+    required:true
   }
 });
 
