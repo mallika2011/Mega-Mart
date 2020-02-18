@@ -177,7 +177,7 @@ userRoutes.route("/viewVendorProduct").post(function(req, res) {
             if (!p.length) {
                 //Not found
                 console.log("No Products");
-                res.send("1");
+                res.json(p);
             } 
             else {
                 console.log("in api ", p);
