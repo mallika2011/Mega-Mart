@@ -89,6 +89,8 @@ export default class Login extends Component {
             </ul>
           </div>
         </nav>
+        <br/>
+        <br/>
         <form onSubmit={this.onSubmit}>
           <div className="form-group">
             <label>USERNAME: </label>

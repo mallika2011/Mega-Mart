@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import axios from "axios";
 import Nav from "react-bootstrap/Nav";
 import Form from "react-bootstrap/Form";
+import Navbar from 'react-bootstrap/Navbar'
+
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 
@@ -34,20 +36,21 @@ export default class VendorHome extends Component {
   render() {
     return (
       <div>
-        <Nav variant="pills" defaultActiveKey="/home">
-          <Nav.Item>
-            <Nav.Link href="/VendorHome">HOME</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="/VendorAddProduct">Add Products</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="/VendorViewProduct">View All</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="/dispatch">Dispatch</Nav.Link>
-          </Nav.Item>
-        </Nav>
+        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+          <Navbar.Brand href="/VendorHome">HOME</Navbar.Brand>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          <Navbar.Collapse id="responsive-navbar-nav">
+            <Nav className="mr-auto">
+              <Nav.Link href="/VendorAddProduct">Add Products   </Nav.Link>
+              <Nav.Link href="/VendorViewProduct">View Products   </Nav.Link>
+              <Nav.Link href="/dispatch">Dispatch Ready   </Nav.Link>
+              <Nav.Link href="/dispatch">Dispatched   </Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Navbar>
+        <br/>
+        <br/>
+
         <h1>Welcome {this.state.data.fullname} !</h1>
 
         {/* <table className="table table-striped">

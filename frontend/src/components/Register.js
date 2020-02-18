@@ -98,6 +98,8 @@ export default class Register extends Component {
             </ul>
           </div>
         </nav>
+        <br/>
+        <br/>
         <Form onSubmit={this.onSubmit}>
           <div className="form-group">
             <label>Full Name: </label>

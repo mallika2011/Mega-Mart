@@ -9,13 +9,22 @@ const Products = new mongoose.Schema({
         type: String
     },
     price: {
-        type: String
+        type: Number
     },
     quantity: {
-        type: String
+        type: Number
     },
     status:{
         type: String
+    },
+    quantity_ordered:{
+        type: Number
+    },
+    quantity_remaining:{
+        type: Number
+    },
+    isDispatched:{
+        type:Boolean
     }
 
 });

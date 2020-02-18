@@ -10,6 +10,7 @@ import CustomerHome from './components/CustomerHome'
 import Home from './components/Home'
 import VendorAddProduct from './components/VendorAddProduct'
 import VendorViewProduct from './components/VendorViewProduct'
+import CustomerView from './components/CustomerView'
 
 
 
@@ -31,9 +32,7 @@ function App() {
         <Route path="/CustomerHome" component={CustomerHome}/>
         <Route path="/VendorAddProduct" component={VendorAddProduct}/>
         <Route path="/VendorViewProduct" component={VendorViewProduct}/>
-
-
-
+        <Route path="/CustomerView" component={CustomerView}/>
 
       </div>
     </Router>

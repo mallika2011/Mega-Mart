@@ -26,7 +26,16 @@ connection.once("open", function() {
 var Users = [];
 
 // API endpoints
-
+userRoutes.route("/showavailableprods").get(function(req, res) {
+    Products.find(function(err, p) {
+        if (err)
+            console.log(err);
+        else {
+            console.log(p);
+            res.json(p);
+        }
+    });
+});
 
 
 // Getting all the users
@@ -135,57 +144,82 @@ userRoutes.route("/:id").get(function(req, res) {
 userRoutes.route("/addvendorproduct").post(function(req, res) {
     let products = new Products(req.body);
     console.log("enterd", req.body)
-
-    Products.find({ username: req.body.username}, function(err, p) {
-        if (err)
-            console.log(err);
-        else {
-            if(p.length==0)
-            {
-                products.save()
-                .then(products => { res.status(200).json({ Products: "Product added successfully" }); })
-                .catch(err => { res.status(400).send("Error"); });
-            }
-            else{
-                 console.log(p);
-                 Products.find({ productname: req.body.productname }, function(err, p2) {
-                    if (err)
-                        console.log(err);
-                    else {
-                        if (p2.length!=0)
-                            res.send("2");
+    if(!req.body.username || !req.body.productname || !req.body.quantity || !req.body.price)
+    {
+        res.send("1");
+    }
+    else if(isNaN(req.body.price) || isNaN(req.body.quantity))
+    {
+        res.send("3");
+    }
+    else{
+        Products.find({ username: req.body.username}, function(err, p) {
+            if (err)
+                console.log(err);
+            else {
+                if(p.length==0)
+                {
+                    products.save()
+                    .then(products => { res.status(200).json({ Products: "Product added successfully" }); })
+                    .catch(err => { res.status(400).send("Error"); });
+                }
+                else{
+                    console.log(p);
+                    Products.find({ productname: req.body.productname }, function(err, p2) {
+                        if (err)
+                            console.log(err);
                         else {
-                            products.save()
-                                .then(products => { res.status(200).json({ Products: "Product added successfully" }); })
-                                .catch(err => { res.status(400).send("Error"); });
+                            if (p2.length!=0)
+                                res.send("2");
+                            else {
+                                products.save()
+                                    .then(products => { res.status(200).json({ Products: "Product added successfully" }); })
+                                    .catch(err => { res.status(400).send("Error"); });
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
-        }
-    });
-    
+        });
+    } 
 });
 
 userRoutes.route("/viewVendorProduct").post(function(req, res) {
-    console.log("I was called", req.body)
     Products.find({ username: req.body.username }, function(err, p) {
         if (err)
             console.log(err);
         else {
-            console.log("Pringting debug", p);
             if (!p.length) {
                 //Not found
                 console.log("No Products");
                 res.json(p);
             } 
             else {
-                console.log("in api ", p);
                 res.json(p);
             }
         }
     });
 });
+
+userRoutes.route("/deleteVendorProduct").post(function(req, res) {
+    let id = req.body.id;
+    Products.findById(id, function(err, prod) {
+        if(err)
+            console.log(err);
+        else{
+            Products.deleteOne(prod, function(err, obj) {
+                if (err) throw err;
+                else 
+                {
+                    console.log("1 document deleted", prod);
+                    res.json(prod);
+                }
+            });
+        }
+    });
+});
+
+
 
 app.use("/", userRoutes);
 

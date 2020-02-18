@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import axios from "axios";
 import Nav from "react-bootstrap/Nav";
 import Form from "react-bootstrap/Form";
+import Navbar from 'react-bootstrap/Navbar'
+
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 
@@ -57,11 +59,15 @@ export default class VendorAddProducts extends Component {
       productname: this.state.productname,
       price: this.state.price,
       quantity: this.state.quantity,
-      status:"notready"
+      status:"---",
+      quantity_ordered:0,
+      quantity_remaining:this.state.quantity
     };
 
     axios.post("http://localhost:4000/addvendorproduct", newProd).then(res => {
       if (res.data === 2) alert("Duplicate Product! Already exists");
+      else if(res.data === 1) alert("Please enter required fields")
+      else if(res.data === 3) alert("Incorrect field types!")
       else alert("Product succesfully added!")
       console.log(res.data);
     });
@@ -76,21 +82,20 @@ export default class VendorAddProducts extends Component {
   render() {
     return (
       <div>
-        <Nav variant="pills" defaultActiveKey="/home">
-          <Nav.Item>
-            <Nav.Link href="/VendorHome">HOME</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="/VendorAddProduct">Add Products</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="/VendorViewProduct">View All</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="/dispatch">Dispatch</Nav.Link>
-          </Nav.Item>
-        </Nav>
-        
+        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+          <Navbar.Brand href="/VendorHome">HOME</Navbar.Brand>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          <Navbar.Collapse id="responsive-navbar-nav">
+            <Nav className="mr-auto">
+              <Nav.Link href="/VendorAddProduct">Add Products   </Nav.Link>
+              <Nav.Link href="/VendorViewProduct">View Products   </Nav.Link>
+              <Nav.Link href="/dispatch">Dispatch Ready   </Nav.Link>
+              <Nav.Link href="/dispatch">Dispatched   </Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Navbar>
+        <br/>
+        <br/>
         <h1>Add New Product</h1>
         
         <Form onSubmit={this.onSubmit}>

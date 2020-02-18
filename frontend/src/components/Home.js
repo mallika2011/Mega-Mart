@@ -40,6 +40,8 @@ export default class Home extends Component {
             </ul>
           </div>
         </nav>
+        <br/>
+        <br/>
         <h1>HOMEPAGE</h1>
       </div>
     );

@@ -46,6 +46,7 @@ export default class UsersList extends Component {
             </ul>
           </div>
         </nav>
+        <br/>
         <table className="table table-striped">
           <thead>
             <tr>
