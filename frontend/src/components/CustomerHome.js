@@ -40,7 +40,10 @@ export default class VendorHome extends Component {
             <Navbar.Brand href="/CustomerHome">HOME</Navbar.Brand>
             <Nav className="mr-auto">
                 <Nav.Link href="/CustomerView">Add to Cart</Nav.Link>
-                <Nav.Link href="#features">Orders</Nav.Link>
+                <Nav.Link href="/CustomerCart">Orders</Nav.Link>
+            </Nav>
+            <Nav>
+                <Nav.Link href="/">Logout</Nav.Link>
             </Nav>
             {/* <Form inline>
             <FormControl type="text" placeholder="Search" className="mr-sm-2" />

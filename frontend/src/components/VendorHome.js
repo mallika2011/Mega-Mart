@@ -46,6 +46,9 @@ export default class VendorHome extends Component {
               <Nav.Link href="/dispatch">Dispatch Ready   </Nav.Link>
               <Nav.Link href="/dispatch">Dispatched   </Nav.Link>
             </Nav>
+            <Nav>
+                <Nav.Link href="/">Logout</Nav.Link>
+            </Nav>
           </Navbar.Collapse>
         </Navbar>
         <br/>

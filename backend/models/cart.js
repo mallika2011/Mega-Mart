@@ -14,9 +14,12 @@ const Cart = new mongoose.Schema({
     status:{
         type: String
     },
-    quaproductname:{
-        type: Number
+    productname:{
+        type: String
+    },
+    seller:{
+        type:String
     }
 });
 
-module.exports = mongoose.model("Products", Products);
+module.exports = mongoose.model("Cart", Cart);

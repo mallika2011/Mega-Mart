@@ -9,7 +9,8 @@ export default class Login extends Component {
 
     this.state = {
       username: "",
-      password: ""
+      password: "",
+      type:""
     };
 
     this.onChangeUsername = this.onChangeUsername.bind(this);
@@ -48,6 +49,7 @@ export default class Login extends Component {
       }
       if (res.data.val === 3) {
         console.log("found");
+        localStorage.setItem("type", res.data.type);
         if(res.data.type === "vendor")
           this.props.history.push("/VendorHome");
         else 
@@ -56,12 +58,7 @@ export default class Login extends Component {
       }
     });
 
-    /*
-     * Setup Local storage
-     */
-
     localStorage.setItem("username", this.state.username);
-    localStorage.setItem("type", this.state.type);
 
     this.setState({
       username: "",

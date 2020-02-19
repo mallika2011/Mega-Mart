@@ -12,6 +12,8 @@ var BCRYPT_SALT_ROUNDS = 12;
 
 let User = require("./models/user");
 let Products = require("./models/products");
+let Cart = require("./models/cart");
+
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -26,15 +28,32 @@ connection.once("open", function() {
 var Users = [];
 
 // API endpoints
-userRoutes.route("/showavailableprods").get(function(req, res) {
-    Products.find(function(err, p) {
-        if (err)
-            console.log(err);
-        else {
-            console.log(p);
-            res.json(p);
-        }
-    });
+userRoutes.route("/showavailableprods").post(function(req, res) {
+    console.log("IN show avail");
+    let s=req.body.type
+    if(req.body.type)
+    {
+        var mysort = {s:1};
+        Products.find().sort(s).exec(function(err, p) {
+            if (err)
+                console.log(err);
+            else {
+                console.log(p);
+                res.json(p);
+            }
+        });
+    }
+    else{
+        console.log("came into else ");
+        Products.find(function(err, p) {
+            if (err)
+                console.log(err);
+            else {
+                console.log(p);
+                res.json(p);
+            }
+        });
+    }
 });
 
 
@@ -201,6 +220,23 @@ userRoutes.route("/viewVendorProduct").post(function(req, res) {
     });
 });
 
+userRoutes.route("/showmyproducts").post(function(req, res) {
+    Cart.find({ username: req.body.username }, function(err, p) {
+        if (err)
+            console.log(err);
+        else {
+            if (!p.length) {
+                //Not found
+                console.log("No Products");
+                res.json(p);
+            } 
+            else {
+                res.json(p);
+            }
+        }
+    });
+});
+
 userRoutes.route("/deleteVendorProduct").post(function(req, res) {
     let id = req.body.id;
     Products.findById(id, function(err, prod) {
@@ -211,12 +247,58 @@ userRoutes.route("/deleteVendorProduct").post(function(req, res) {
                 if (err) throw err;
                 else 
                 {
+                    // Carts.find({productid:prod._id}, function(err, x) {
+                    //     if(err)
+                    //         console.log(err);
+                        // else{
+                            console.log("the product ot be cancelled is ", prod);
+                            var myquery = { productid: prod._id };
+                            var newvalues = { $set: {status:"cancelled"} };
+                            Cart.updateMany(myquery, newvalues, function(err, res) {
+                                if (err) throw err;
+                                console.log("1 document updated");
+                            });
+                        // }
+                        
+                
+                    // });
                     console.log("1 document deleted", prod);
                     res.json(prod);
                 }
             });
         }
     });
+});
+
+userRoutes.route("/addCustomerProduct").post(function(req, res) {
+    let cart = new Cart(req.body);
+    console.log("New product");
+    console.log(req.body)
+    cart.save()
+        .then(user => {
+            res.status(200).json({ Cart: "Order successfully" });
+        })
+        .catch(err => {
+            res.status(400).send("Error");
+        });
+    Products.findById(req.body.productid, function(err, prod) {
+        if(err)
+            console.log(err);
+        else{
+            console.log("the product ot be updated is ", prod);
+            var myquery = { username: req.body.seller };
+            var newvalues = { $set: {quantity_ordered: prod.quantity_ordered+req.body.quantity, quantity_remaining: prod.quantity-prod.quantity_ordered-req.body.quantity} };
+            Products.updateOne(myquery, newvalues, function(err, res) {
+                if (err) throw err;
+                console.log("1 document updated");
+            });
+        }
+        
+
+    });
+    
+    
+
 });
 
 

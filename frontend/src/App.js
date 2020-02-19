@@ -11,6 +11,7 @@ import Home from './components/Home'
 import VendorAddProduct from './components/VendorAddProduct'
 import VendorViewProduct from './components/VendorViewProduct'
 import CustomerView from './components/CustomerView'
+import CustomerCart from './components/CustomerCart'
 
 
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/VendorAddProduct" component={VendorAddProduct}/>
         <Route path="/VendorViewProduct" component={VendorViewProduct}/>
         <Route path="/CustomerView" component={CustomerView}/>
+        <Route path="/CustomerCart" component={CustomerCart}/>
 
       </div>
     </Router>
