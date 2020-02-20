@@ -89,7 +89,7 @@ export default class VendorAddProducts extends Component {
             <Nav className="mr-auto">
               <Nav.Link href="/VendorAddProduct">Add Products   </Nav.Link>
               <Nav.Link href="/VendorViewProduct">View Products   </Nav.Link>
-              <Nav.Link href="/dispatch">Dispatch Ready   </Nav.Link>
+              <Nav.Link href="/VendorDispatch">Dispatch Ready   </Nav.Link>
               <Nav.Link href="/dispatch">Dispatched   </Nav.Link>
             </Nav>
             <Nav>

@@ -52,8 +52,8 @@ export default class CustomerView extends Component {
     const newProd = {
       username:localStorage.getItem("username"),
       productid: e._id,
-      quantity:quantity,
-      status:"waiting",
+      quantity:parseFloat(quantity),
+      status:"Waiting",
       productname:e.productname,
       seller:e.username
     };
@@ -61,7 +61,10 @@ export default class CustomerView extends Component {
       .post("http://localhost:4000/addCustomerProduct", newProd)
       .then(response => {
         // this.setState({ prods: response.data });
-        alert("Order success!")
+        if(response.data == "1")
+          alert("Sorry, insuficient quantity available");
+        else
+          alert("Order success!")
         console.log(response.data);
       })
       .catch(function(error) {
@@ -84,11 +87,11 @@ export default class CustomerView extends Component {
                 <Nav.Link href="/CustomerView">Add to Cart</Nav.Link>
                 <Nav.Link href="/CustomerCart">Orders</Nav.Link>
             </Nav>
-            <NavDropdown title="Sort" id="collasible-nav-dropdown">
+            {/* <NavDropdown title="Sort" id="collasible-nav-dropdown">
               <NavDropdown.Item value ="price" onClick={()=>{this.sort("price");}}>Price</NavDropdown.Item>
               <NavDropdown.Item value ="qty" onClick={()=>{this.sort("qty");}}>Quantity</NavDropdown.Item>
               <NavDropdown.Item value ="rat" onClick={()=>{this.sort("rat");}}>Rating</NavDropdown.Item>
-            </NavDropdown>
+            </NavDropdown> */}
             <Form inline>
               <FormControl type="text" placeholder="Search" className="mr-sm-2" onChange={this.onchange}/>
               <Button variant="outline-info">Search</Button>

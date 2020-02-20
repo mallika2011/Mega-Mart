@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 const app = express();
 const PORT = 4000;
-const userRoutes = express.Router();
+const Routes = express.Router();
 
 var bcrypt = require("bcrypt");
 var BCRYPT_SALT_ROUNDS = 12;
@@ -25,40 +25,13 @@ connection.once("open", function() {
     console.log("MongoDB database connection established succesfully.");
 });
 
-var Users = [];
-
-// API endpoints
-userRoutes.route("/showavailableprods").post(function(req, res) {
-    console.log("IN show avail");
-    let s=req.body.type
-    if(req.body.type)
-    {
-        var mysort = {s:1};
-        Products.find().sort(s).exec(function(err, p) {
-            if (err)
-                console.log(err);
-            else {
-                console.log(p);
-                res.json(p);
-            }
-        });
-    }
-    else{
-        console.log("came into else ");
-        Products.find(function(err, p) {
-            if (err)
-                console.log(err);
-            else {
-                console.log(p);
-                res.json(p);
-            }
-        });
-    }
-});
+/*
+ *  API endpoints
+ */
 
 
 // Getting all the users
-userRoutes.route("/").get(function(req, res) {
+Routes.route("/").get(function(req, res) {
     User.find(function(err, users) {
         if (err)
             console.log(err);
@@ -69,8 +42,8 @@ userRoutes.route("/").get(function(req, res) {
     });
 });
 
-//Getting specific users
-userRoutes.route("/vendor").post(function(req, res) {
+//Vendor utility API
+Routes.route("/vendor").post(function(req, res) {
     User.findOne({ username: req.body.username }, function(err, users) {
         if (err)
             console.log(err);
@@ -86,8 +59,8 @@ userRoutes.route("/vendor").post(function(req, res) {
     });
 });
 
-// Searching for a users Lookup
-userRoutes.route("/login").post(function(req, res) {
+// Login API
+Routes.route("/login").post(function(req, res) {
     console.log("Here");
     console.log(req.body);
     let response = {
@@ -129,7 +102,7 @@ userRoutes.route("/login").post(function(req, res) {
 });
 
 // Adding a new user
-userRoutes.route("/add").post(function(req, res) {
+Routes.route("/add").post(function(req, res) {
     console.log(req);
     let user = new User(req.body);
     User.findOne({ username: req.body.username }, function(err, users) {
@@ -153,14 +126,15 @@ userRoutes.route("/add").post(function(req, res) {
 });
 
 // Getting a user by id
-userRoutes.route("/:id").get(function(req, res) {
+Routes.route("/:id").get(function(req, res) {
     let id = req.params.id;
     User.findById(id, function(err, user) {
         res.json(user);
     });
 });
 
-userRoutes.route("/addvendorproduct").post(function(req, res) {
+//Add a vendor product
+Routes.route("/addvendorproduct").post(function(req, res) {
     let products = new Products(req.body);
     console.log("enterd", req.body)
     if(!req.body.username || !req.body.productname || !req.body.quantity || !req.body.price)
@@ -203,8 +177,37 @@ userRoutes.route("/addvendorproduct").post(function(req, res) {
     } 
 });
 
-userRoutes.route("/viewVendorProduct").post(function(req, res) {
-    Products.find({ username: req.body.username }, function(err, p) {
+//Delete a vendor product
+Routes.route("/deleteVendorProduct").post(function(req, res) {
+    let id = req.body.id;
+    Products.findById(id, function(err, prod) {
+        if(err)
+            console.log(err);
+        else{
+            Products.deleteOne(prod, function(err, obj) {
+                if (err) throw err;
+                else 
+                {
+                    console.log("the product ot be cancelled is ", prod);
+                    var myquery = { productid: prod._id };
+                    var newvalues = { $set: {status:"Cancelled"} };
+                    Cart.updateMany(myquery, newvalues, function(err, res) {
+                        if (err) throw err;
+                        console.log("1 document updated");
+                    });
+                    console.log("1 document deleted", prod);
+                    res.json(prod);
+                }
+            });
+        }
+    });
+});
+
+//View all vendor's products
+Routes.route("/viewVendorProduct").post(function(req, res) {
+    console.log("In view ", req);
+    
+    Products.find({ username: req.body.username, quantity_remaining: { $gt: 0 } }, function(err, p) {
         if (err)
             console.log(err);
         else {
@@ -220,7 +223,56 @@ userRoutes.route("/viewVendorProduct").post(function(req, res) {
     });
 });
 
-userRoutes.route("/showmyproducts").post(function(req, res) {
+//View all products ready for dispatch
+Routes.route("/dispatchviewVendorProduct").post(function(req, res) {
+    console.log("In dispatch ", req);
+    Products.find({ username: req.body.username, quantity_remaining: { $lte: 0 } }, function(err, p) {
+        if (err)
+            console.log(err);
+        else {
+            if (!p.length) {
+                //Not found
+                console.log("No Products");
+                res.json(p);
+            } 
+            else {
+                res.json(p);
+            }
+        }
+    });
+});
+
+//Dispatch products
+Routes.route("/dispatchVendorProduct").post(function(req, res) {
+    Products.find({ _id: req.body.id }, function(err, p) {
+        if (err)
+            console.log(err);
+        else {
+            console.log(p[0].productname);
+            if (!p.length) {
+                console.log("No Products");
+                res.json(p);
+            } 
+            else {
+                Products.deleteOne(p[0], function(err, obj) {
+                    if (err) throw err;
+                    else 
+                    {
+                        var myquery = { productid: p[0]._id };
+                        var newvalues = { $set: {status:"Dispatched"} };
+                        Cart.updateMany(myquery, newvalues, function(err, res) {
+                            if (err) throw err;
+                        });
+                        res.json(p[0]);
+                    }
+                });               
+            }
+        }
+    });
+});
+
+//View all my orders
+Routes.route("/showmyproducts").post(function(req, res) {
     Cart.find({ username: req.body.username }, function(err, p) {
         if (err)
             console.log(err);
@@ -237,73 +289,86 @@ userRoutes.route("/showmyproducts").post(function(req, res) {
     });
 });
 
-userRoutes.route("/deleteVendorProduct").post(function(req, res) {
-    let id = req.body.id;
-    Products.findById(id, function(err, prod) {
-        if(err)
-            console.log(err);
-        else{
-            Products.deleteOne(prod, function(err, obj) {
-                if (err) throw err;
-                else 
-                {
-                    // Carts.find({productid:prod._id}, function(err, x) {
-                    //     if(err)
-                    //         console.log(err);
-                        // else{
-                            console.log("the product ot be cancelled is ", prod);
-                            var myquery = { productid: prod._id };
-                            var newvalues = { $set: {status:"cancelled"} };
-                            Cart.updateMany(myquery, newvalues, function(err, res) {
-                                if (err) throw err;
-                                console.log("1 document updated");
-                            });
-                        // }
-                        
-                
-                    // });
-                    console.log("1 document deleted", prod);
-                    res.json(prod);
-                }
-            });
-        }
-    });
+//Show all available products to customer
+Routes.route("/showavailableprods").post(function(req, res) {
+    console.log("IN show avail");
+    let s=req.body.type
+    if(req.body.type)
+    {
+        var mysort = {s:1};
+        Products.find().sort(s).exec(function(err, p) {
+            if (err)
+                console.log(err);
+            else {
+                console.log(p);
+                res.json(p);
+            }
+        });
+    }
+    else{
+        console.log("came into else ");
+        Products.find(function(err, p) {
+            if (err)
+                console.log(err);
+            else {
+                console.log(p);
+                res.json(p);
+            }
+        });
+    }
 });
 
-userRoutes.route("/addCustomerProduct").post(function(req, res) {
+//Add a customer product
+Routes.route("/addCustomerProduct").post(function(req, res) {
     let cart = new Cart(req.body);
     console.log("New product");
     console.log(req.body)
-    cart.save()
-        .then(user => {
-            res.status(200).json({ Cart: "Order successfully" });
-        })
-        .catch(err => {
-            res.status(400).send("Error");
-        });
     Products.findById(req.body.productid, function(err, prod) {
         if(err)
             console.log(err);
         else{
-            console.log("the product ot be updated is ", prod);
-            var myquery = { username: req.body.seller };
-            var newvalues = { $set: {quantity_ordered: prod.quantity_ordered+req.body.quantity, quantity_remaining: prod.quantity-prod.quantity_ordered-req.body.quantity} };
-            Products.updateOne(myquery, newvalues, function(err, res) {
-                if (err) throw err;
-                console.log("1 document updated");
-            });
+            console.log("the customer bought is ", prod);
+            if(prod.quantity_remaining < req.body.quantity)
+            {
+                res.send("1");
+            }
+            else
+            {                
+                console.log("After success check quantity : ",)
+                if(prod.quantity_remaining-req.body.quantity === 0 )
+                {
+                    console.log("Changing status to Placed", prod._id);
+                    var myquery = { productid: prod._id };
+                    var newvalues = { $set: {status:"Placed"} };
+                    Cart.updateMany(myquery, newvalues, function(err, res) {
+                        if (err) throw err;
+                    }); 
+                    cart.status="Placed" 
+                    cart.save()
+                }
+                cart.save()
+                .then(user => {
+                    res.status(200).json({ Cart: "Order successfully" });
+                })
+                .catch(err => {
+                    res.status(400).send("Error");
+                });
+
+                var myquery = { _id: req.body.productid };
+                // var newvalues = { $set: {quantity_ordered: prod.quantity_ordered+req.body.quantity, quantity_remaining: prod.quantity_remaining-req.body.quantity} };
+                var newvalues = { $set: {quantity_remaining: prod.quantity_remaining-req.body.quantity,quantity_ordered: prod.quantity_ordered+req.body.quantity} };
+                Products.updateOne(myquery, newvalues, function(err, resp) {
+                    if (err) throw err;
+                    console.log(" Updated remaining qty", resp);
+                });
+            }
         }
-        
-
     });
-    
-    
-
 });
 
 
 
-app.use("/", userRoutes);
+app.use("/", Routes);
 
 app.listen(PORT, function() {
     console.log("Server is running on port: " + PORT);

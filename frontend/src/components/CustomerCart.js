@@ -66,6 +66,7 @@ export default class CustomerView extends Component {
               <th>Product Name</th>
               <th>Seller</th>
               <th>Quantity</th>
+              <th>Quantity Remaining</th>
               <th>Status</th>
               <th>Select</th>
               {/* <th>Quantity Ordered</th>
@@ -84,9 +85,10 @@ export default class CustomerView extends Component {
                   <td>{p.productname}</td>
                   <td>{p.seller}</td>
                   <td>{p.quantity}</td>
+                  <td>{p.remaining}</td>
                   <td>{p.status}</td>
                   <td className="del-cell">
-                  <Button variant="success" className="btn btn-primary" value="remove">bt</Button>
+                  <Button variant="info" className="btn btn-primary" value="remove">Edit</Button>
                   </td>
                 </tr>
               );

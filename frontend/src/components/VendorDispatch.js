@@ -7,11 +7,11 @@ import Navbar from 'react-bootstrap/Navbar'
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 
-export default class VendorViewAll extends Component {
+export default class VendorDispatch extends Component {
   constructor(props) {
       super(props);
       this.state = { prods: [] };
-      this.deleteprod=this.deleteprod.bind(this);
+      this.dispatchprod=this.dispatchprod.bind(this);
     }
   
     componentDidMount() {
@@ -20,7 +20,7 @@ export default class VendorViewAll extends Component {
       };
       // this.setState({ username: newUser.username });
       axios
-        .post("http://localhost:4000/viewVendorProduct", newUser)
+        .post("http://localhost:4000/dispatchviewVendorProduct", newUser)
         .then(response => {
           this.setState({ prods: response.data });
         })
@@ -28,16 +28,14 @@ export default class VendorViewAll extends Component {
           console.log(error);
         });
     }
-  deleteprod(prod_id) {
-    console.log(prod_id)
+  dispatchprod(prod_id) {
     const newProd = {
       id: prod_id
     };
     axios
-      .post("http://localhost:4000/deleteVendorProduct", newProd)
+      .post("http://localhost:4000/dispatchVendorProduct", newProd)
       .then(response => {
-        // this.setState({ prods: response.data });
-        console.log("Deleted")
+        console.log(response.data)
         this.componentDidMount()
       })
       .catch(function(error) {
@@ -73,11 +71,11 @@ export default class VendorViewAll extends Component {
             <tr>
               <th>Product Name</th>
               <th>Price</th>
-              <th>Quantity</th>
+              {/* <th>Quantity</th> */}
               <th>Quantity Ordered</th>
-              <th>Quantity Remaining</th>
-              <th>Status</th>
-              <th>Delete</th>
+              {/* <th>Quantity Remaining</th> */}
+              {/* <th>Status</th> */}
+              <th>Dispatch</th>
             </tr>
           </thead>
           <tbody>
@@ -86,12 +84,12 @@ export default class VendorViewAll extends Component {
                 <tr>
                   <td>{p.productname}</td>
                   <td>{p.price}</td>
-                  <td>{p.quantity}</td>
+                  {/* <td>{p.quantity}</td> */}
                   <td>{p.quantity_ordered}</td>
-                  <td>{p.quantity_remaining}</td>
-                  <td>{p.status}</td>
+                  {/* <td>{p.quantity_remaining}</td> */}
+                  {/* <td>{p.status}</td> */}
                   <td className="del-cell">
-                  <Button variant="danger" className="btn btn-primary" value="X" onClick={()=>{this.deleteprod(p._id);}}>Delete</Button>
+                  <Button variant="warning" className="btn btn-primary" value="X" onClick={()=>{this.dispatchprod(p._id);}}>Dispatch</Button>
                   </td>
                 </tr>
               );
