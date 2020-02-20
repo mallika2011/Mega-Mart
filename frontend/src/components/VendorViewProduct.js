@@ -56,7 +56,7 @@ export default class VendorViewAll extends Component {
               <Nav.Link href="/VendorAddProduct">Add Products   </Nav.Link>
               <Nav.Link href="/VendorViewProduct">View Products   </Nav.Link>
               <Nav.Link href="/VendorDispatch">Dispatch Ready   </Nav.Link>
-              <Nav.Link href="/dispatch">Dispatched   </Nav.Link>
+              <Nav.Link href="/DispatchedProducts">Dispatched   </Nav.Link>
             </Nav>
             <Nav>
                 <Nav.Link href="/">Logout</Nav.Link>

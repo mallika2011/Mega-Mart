@@ -23,6 +23,12 @@ const User = new mongoose.Schema({
   type: {
     type: String,
     required:true
+  },
+  rating:{
+    type:Number
+  },
+  review:{
+    type: String
   }
 });
 

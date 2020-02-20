@@ -5,6 +5,8 @@ import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import Button from 'react-bootstrap/Button'
 import Navbar from 'react-bootstrap/Navbar'
+import DropdownButton from 'react-bootstrap/DropdownButton'
+import Dropdown from 'react-bootstrap/Dropdown'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 import Popup from 'react-popup';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
@@ -17,8 +19,10 @@ export default class CustomerView extends Component {
         prods: [],
         search:"",
         quantity:0,
+        type:""
       };
 
+      this.sort=this.sort.bind(this);
 
     }
     
@@ -28,9 +32,8 @@ export default class CustomerView extends Component {
         username: localStorage.getItem("username")
       };
       const t = {
-        type:""
+        type:this.state.type
       };
-      // this.setState({ username: newUser.username });
       axios
         .post("http://localhost:4000/showavailableprods",t)
         .then(response => {
@@ -44,6 +47,12 @@ export default class CustomerView extends Component {
   onchange = e =>{
     this.setState({search : e.target.value});
   }
+  sort=(s)=>{
+    this.setState({type:s})
+    console.log(this.state.type)
+    this.componentDidMount();
+  }
+
   addtoccart(e){
     const quantity = prompt('Please enter the quantity')
     if(!isNaN(quantity) && quantity){
@@ -87,17 +96,17 @@ export default class CustomerView extends Component {
                 <Nav.Link href="/CustomerView">Add to Cart</Nav.Link>
                 <Nav.Link href="/CustomerCart">Orders</Nav.Link>
             </Nav>
-            {/* <NavDropdown title="Sort" id="collasible-nav-dropdown">
-              <NavDropdown.Item value ="price" onClick={()=>{this.sort("price");}}>Price</NavDropdown.Item>
-              <NavDropdown.Item value ="qty" onClick={()=>{this.sort("qty");}}>Quantity</NavDropdown.Item>
-              <NavDropdown.Item value ="rat" onClick={()=>{this.sort("rat");}}>Rating</NavDropdown.Item>
-            </NavDropdown> */}
+            <DropdownButton id="dropdown-basic-button" onClick={()=>{this.sort('')}} variant="outline-info" title="Sort" style={{paddingRight:15}}>
+              <Dropdown.Item onClick={()=>{this.sort('price')}}>Price</Dropdown.Item>
+              <Dropdown.Item onClick={()=>{this.sort('quantity')}}>Quantity</Dropdown.Item> 
+              <Dropdown.Item onClick={()=>{this.sort('rating')}}>Rating</Dropdown.Item>
+            </DropdownButton>
             <Form inline>
               <FormControl type="text" placeholder="Search" className="mr-sm-2" onChange={this.onchange}/>
               <Button variant="outline-info">Search</Button>
             </Form>
             <Nav>
-                <Nav.Link href="/">Logout</Nav.Link>
+                <Nav.Link style={{paddingLeft:15}}href="/">Logout</Nav.Link>
             </Nav>
         </Navbar>
         <br/>
@@ -113,9 +122,6 @@ export default class CustomerView extends Component {
               <th>Seller</th>
               <th>Quantity Remaining</th>
               <th>Select</th>
-              {/* <th>Quantity Ordered</th>
-              <th>Status</th>
-              <th>Delete</th> */}
             </tr>
           </thead>
           <tbody>

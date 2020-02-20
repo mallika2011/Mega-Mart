@@ -13,12 +13,7 @@ import VendorViewProduct from './components/VendorViewProduct'
 import VendorDispatch from './components/VendorDispatch'
 import CustomerView from './components/CustomerView'
 import CustomerCart from './components/CustomerCart'
-
-
-
-
-
-
+import DispatchedProducts from './components/DispatchedProducts'
 
 
 function App() {
@@ -37,6 +32,7 @@ function App() {
         <Route path="/VendorDispatch" component={VendorDispatch}/>
         <Route path="/CustomerView" component={CustomerView}/>
         <Route path="/CustomerCart" component={CustomerCart}/>
+        <Route path="/DispatchedProducts" component={DispatchedProducts}/>
 
       </div>
     </Router>

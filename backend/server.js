@@ -13,6 +13,7 @@ var BCRYPT_SALT_ROUNDS = 12;
 let User = require("./models/user");
 let Products = require("./models/products");
 let Cart = require("./models/cart");
+let Dispatched = require("./models/dispatched");
 
 
 app.use(cors());
@@ -41,6 +42,19 @@ Routes.route("/").get(function(req, res) {
         }
     });
 });
+
+Routes.route("/showdispatchedProducts").get(function(req, res) {    
+    console.log("Hey")
+    Dispatched.find(function(err, disp) {
+        if (err)
+            console.log(err);
+        else {
+            console.log(disp);
+            res.json(disp);
+        }
+    });
+});
+
 
 //Vendor utility API
 Routes.route("/vendor").post(function(req, res) {
@@ -263,6 +277,13 @@ Routes.route("/dispatchVendorProduct").post(function(req, res) {
                         Cart.updateMany(myquery, newvalues, function(err, res) {
                             if (err) throw err;
                         });
+                        let d = new Dispatched({
+                            seller:p[0].username,
+                            productname:p[0].productname,
+                            review:"",
+                            rating:0
+                        });
+                        d.save() //Add a new dispatched good
                         res.json(p[0]);
                     }
                 });               
@@ -291,8 +312,8 @@ Routes.route("/showmyproducts").post(function(req, res) {
 
 //Show all available products to customer
 Routes.route("/showavailableprods").post(function(req, res) {
-    console.log("IN show avail");
     let s=req.body.type
+    console.log("TYYYPPEEE",s)
     if(req.body.type)
     {
         var mysort = {s:1};
@@ -306,7 +327,6 @@ Routes.route("/showavailableprods").post(function(req, res) {
         });
     }
     else{
-        console.log("came into else ");
         Products.find(function(err, p) {
             if (err)
                 console.log(err);
@@ -355,12 +375,62 @@ Routes.route("/addCustomerProduct").post(function(req, res) {
                 });
 
                 var myquery = { _id: req.body.productid };
-                // var newvalues = { $set: {quantity_ordered: prod.quantity_ordered+req.body.quantity, quantity_remaining: prod.quantity_remaining-req.body.quantity} };
                 var newvalues = { $set: {quantity_remaining: prod.quantity_remaining-req.body.quantity,quantity_ordered: prod.quantity_ordered+req.body.quantity} };
                 Products.updateOne(myquery, newvalues, function(err, resp) {
                     if (err) throw err;
                     console.log(" Updated remaining qty", resp);
                 });
+            }
+        }
+    });
+});
+
+Routes.route("/editCustomerProduct").post(function(req, res) {
+    let cart = new Cart(req.body);
+    console.log("New product");
+    console.log(req.body)
+    Products.findById(req.body.productid, function(err, prod) {
+        if(err)
+            console.log(err);
+        else{
+            console.log("the customer bought is ", prod);
+            if(prod.quantity_remaining + req.body.quantity_ordered < req.body.newquantity)
+            {
+                res.send("1");
+            }
+            else
+            {                
+                console.log("After success check quantity : ",)
+                if(prod.quantity_remaining-req.body.newquantity === 0 )
+                {
+                    console.log("Changing status to Placed", prod._id);
+                    var myquery = { productid: prod._id };
+                    var newvalues = { $set: {status:"Placed"} };
+                    Cart.updateMany(myquery, newvalues, function(err, res) {
+                        if (err) throw err;
+                    }); 
+                    // cart.status="Placed" 
+                    // cart.save()
+                }
+                // cart.save()
+                // .then(user => {
+                //     res.status(200).json({ Cart: "Order successfully" });
+                // })
+                // .catch(err => {
+                //     res.status(400).send("Error");
+                // });
+
+                var myquery = { _id: req.body.productid };
+                var newvalues = { $set: {quantity_remaining: prod.quantity_remaining+ req.body.quantity_ordered-req.body.newquantity,quantity_ordered: prod.quantity_ordered-req.body.quantity_ordered+req.body.newquantity} };
+                Products.updateOne(myquery, newvalues, function(err, resp) {
+                    if (err) throw err;
+                    console.log(" Updated remaining qty", resp);
+                });
+                var myquery = { _id: req.body._id };
+                var newvalues = { $set: {quantity:req.body.newquantity} };
+                Cart.updateMany(myquery, newvalues, function(err, res) {
+                    if (err) throw err;
+                }); 
             }
         }
     });

@@ -40,6 +40,41 @@ export default class CustomerView extends Component {
     this.setState({search : e.target.value});
   }
 
+  editorder(e){
+    const newProd = {
+      _id:e._id,
+      username:localStorage.getItem("username"),
+      productid: e.productid,
+      quantity_ordered:e.quantity,
+      newquantity:0,
+      status:e.status,
+      productname:e.productname,
+      seller:e.username
+    };
+    const quantity = prompt('Please enter New the quantity')
+    if(!isNaN(quantity) && quantity){
+    this.setState({ quantity : quantity })
+    console.log(this.state.quantity);
+    newProd.newquantity=parseFloat(quantity)
+    axios
+      .post("http://localhost:4000/editCustomerProduct", newProd)
+      .then(response => {
+        // this.setState({ prods: response.data });
+        if(response.data == "1")
+          alert("Sorry, insuficient quantity available");
+        else
+          alert("Order success!")
+        console.log(response.data);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+    }
+    else{
+      alert("Invalid Quantity")
+    }
+  }
+
   render() {
     return (
       <div>
@@ -87,9 +122,9 @@ export default class CustomerView extends Component {
                   <td>{p.quantity}</td>
                   <td>{p.remaining}</td>
                   <td>{p.status}</td>
-                  <td className="del-cell">
-                  <Button variant="info" className="btn btn-primary" value="remove">Edit</Button>
-                  </td>
+                  { p.status === "Waiting" && <td className="del-cell">
+                  <Button variant="info" className="btn btn-primary" value="edit" onClick={()=>{this.editorder(p);}}>Edit</Button>
+                  </td>}
                 </tr>
               );
             })}

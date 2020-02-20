@@ -25,7 +25,14 @@ const Products = new mongoose.Schema({
     },
     isDispatched:{
         type:Boolean
-    }
+    },
+    review:{
+        type: String
+    },
+    rating:{
+        type: Number
+    },
+    
 
 });
 
