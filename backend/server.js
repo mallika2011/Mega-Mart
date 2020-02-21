@@ -44,7 +44,6 @@ Routes.route("/").get(function(req, res) {
 });
 
 Routes.route("/showdispatchedProducts").get(function(req, res) {    
-    console.log("Hey")
     Dispatched.find(function(err, disp) {
         if (err)
             console.log(err);
@@ -278,6 +277,7 @@ Routes.route("/dispatchVendorProduct").post(function(req, res) {
                             if (err) throw err;
                         });
                         let d = new Dispatched({
+                            productid:p[0]._id,
                             seller:p[0].username,
                             productname:p[0].productname,
                             review:"",
@@ -313,7 +313,6 @@ Routes.route("/showmyproducts").post(function(req, res) {
 //Show all available products to customer
 Routes.route("/showavailableprods").post(function(req, res) {
     let s=req.body.type
-    console.log("TYYYPPEEE",s)
     if(req.body.type)
     {
         var mysort = {s:1};
@@ -401,7 +400,7 @@ Routes.route("/editCustomerProduct").post(function(req, res) {
             else
             {                
                 console.log("After success check quantity : ",)
-                if(prod.quantity_remaining-req.body.newquantity === 0 )
+                if(prod.quantity_remaining+req.body.quantity_ordered-req.body.newquantity === 0 )
                 {
                     console.log("Changing status to Placed", prod._id);
                     var myquery = { productid: prod._id };
@@ -412,14 +411,6 @@ Routes.route("/editCustomerProduct").post(function(req, res) {
                     // cart.status="Placed" 
                     // cart.save()
                 }
-                // cart.save()
-                // .then(user => {
-                //     res.status(200).json({ Cart: "Order successfully" });
-                // })
-                // .catch(err => {
-                //     res.status(400).send("Error");
-                // });
-
                 var myquery = { _id: req.body.productid };
                 var newvalues = { $set: {quantity_remaining: prod.quantity_remaining+ req.body.quantity_ordered-req.body.newquantity,quantity_ordered: prod.quantity_ordered-req.body.quantity_ordered+req.body.newquantity} };
                 Products.updateOne(myquery, newvalues, function(err, resp) {
@@ -434,6 +425,52 @@ Routes.route("/editCustomerProduct").post(function(req, res) {
             }
         }
     });
+});
+
+
+Routes.route("/ratereviewvendor").post(function(req, res) {
+    console.log(req.body)
+    var myquery = { username: req.body.seller};
+    var newvalues = { $set: {rating: req.body.rating, review:req.body.review} };
+    User.updateOne(myquery, newvalues, function(err, resp) {
+        if (err) throw err;
+        console.log(" Updated rating and review", resp);
+        res.json(resp)
+    });
+});
+
+Routes.route("/ratereviewproduct").post(function(req, res) {
+    console.log("change",req.body)
+    var myquery = { productid: req.body.productid};
+    var newvalues = { $set: {rating: req.body.rating, review:req.body.review} };
+    Dispatched.updateOne(myquery, newvalues, function(err, resp) {
+        if (err) throw err;
+        console.log(" Updated rating and review", resp);
+        res.json(resp)
+    });
+});
+
+Routes.route("/addrating").post(function(req, res) {
+    console.log(req.body)
+    var prod = req.body
+    var ret=0
+    var itemsProcessed = 0;
+    prod.forEach((element,callback) => {
+        element["rating"]=4
+        // User.find({ username: element.username}, function(err, users) {
+        //     console.log("userrr", users)
+        //     if (err)
+        //         console.log(err);
+        //     else {
+        //         if (!users) {
+        //         } else
+        //         console.log(users.rating)
+        //         element["rating"]=users.rating;
+        //         // itemsProcessed++;               
+        //     }
+        // });
+    });    
+    res.json(prod);
 });
 
 

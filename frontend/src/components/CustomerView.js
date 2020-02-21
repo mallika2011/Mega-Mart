@@ -19,37 +19,51 @@ export default class CustomerView extends Component {
         prods: [],
         search:"",
         quantity:0,
-        type:""
+        type:"price"
       };
 
       this.sort=this.sort.bind(this);
+      this.onChangeType = this.onChangeType.bind(this);
 
     }
-    
-  
-    componentDidMount() {
-      const newUser = {
-        username: localStorage.getItem("username")
-      };
-      const t = {
-        type:this.state.type
-      };
-      axios
-        .post("http://localhost:4000/showavailableprods",t)
-        .then(response => {
-          this.setState({ prods: response.data });
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    }
+      
+  componentDidMount(x) {
+    const newUser = {
+      username: localStorage.getItem("username")
+    };
+    const t = {
+      type:this.state.type
+    };
+    console.log("inmount",x);
+    axios
+      .post("http://localhost:4000/showavailableprods",t)
+      .then(response => {
+        console.log("success1", response.data)
+        axios
+              .post("http://localhost:4000/addrating",response.data)
+              .then(response2 => {
+              console.log("success2")
 
+                this.setState({ prods: response2.data })
+                console.log("data",response2.data)
+              })
+              .catch(function(error) {
+                console.log(error);
+              });
+              })
+      .catch(function(error) {
+        console.log(error);
+      });
+  }
+  onChangeType(event) {
+    console.log("inonchange",event.target.value)
+    this.setState({ type: event.target.value });
+    this.componentDidMount(event.target.value)
+  }
   onchange = e =>{
     this.setState({search : e.target.value});
   }
   sort=(s)=>{
-    this.setState({type:s})
-    console.log(this.state.type)
     this.componentDidMount();
   }
 
@@ -96,17 +110,25 @@ export default class CustomerView extends Component {
                 <Nav.Link href="/CustomerView">Add to Cart</Nav.Link>
                 <Nav.Link href="/CustomerCart">Orders</Nav.Link>
             </Nav>
-            <DropdownButton id="dropdown-basic-button" onClick={()=>{this.sort('')}} variant="outline-info" title="Sort" style={{paddingRight:15}}>
+            {/* <DropdownButton id="dropdown-basic-button" onClick={()=>{this.sort('')}} variant="outline-info" title="Sort" style={{paddingRight:15}}>
               <Dropdown.Item onClick={()=>{this.sort('price')}}>Price</Dropdown.Item>
               <Dropdown.Item onClick={()=>{this.sort('quantity')}}>Quantity</Dropdown.Item> 
               <Dropdown.Item onClick={()=>{this.sort('rating')}}>Rating</Dropdown.Item>
-            </DropdownButton>
+            </DropdownButton> */}
+            <Form.Group style={{paddingTop:15, paddingRight:15}}  controlId="exampleForm.ControlSelect1" value={this.state.type} onChange={this.onChangeType} inputRef={el => (this.inputEl = el)}>
+              <Form.Control as="select">
+                <option value="price">Price</option>
+                <option value="quantity">Quantity</option>
+                <option value="rating">Rating</option>
+              </Form.Control>
+             </Form.Group>
+            <Button style={{marginRight:15}}  onClick={()=>{this.sort();}} variant="outline-info">Sort</Button>
             <Form inline>
               <FormControl type="text" placeholder="Search" className="mr-sm-2" onChange={this.onchange}/>
               <Button variant="outline-info">Search</Button>
             </Form>
             <Nav>
-                <Nav.Link style={{paddingLeft:15}}href="/">Logout</Nav.Link>
+                <Nav.Link style={{paddingLeft:15}} href="/">Logout</Nav.Link>
             </Nav>
         </Navbar>
         <br/>
@@ -119,7 +141,8 @@ export default class CustomerView extends Component {
             <tr>
               <th>Product Name</th>
               <th>Price</th>
-              <th>Seller</th>
+              <th>Vendor</th>
+              <th>Vendor Rating</th>
               <th>Quantity Remaining</th>
               <th>Select</th>
             </tr>
@@ -135,6 +158,7 @@ export default class CustomerView extends Component {
                   <td>{p.productname}</td>
                   <td>{p.price}</td>
                   <td>{p.username}</td>
+                  <td>{p.rating}</td>
                   <td>{p.quantity_remaining}</td>
                   <td className="del-cell">
                   <Button variant="success" className="btn btn-primary" value="buy" onClick={()=>{this.addtoccart(p);}}>Add</Button>

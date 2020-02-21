@@ -1,10 +1,13 @@
 import React, { Component } from "react";
+import NumericInput from 'react-numeric-input';
 import axios from "axios";
 import Nav from "react-bootstrap/Nav";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import Button from 'react-bootstrap/Button'
 import Navbar from 'react-bootstrap/Navbar'
+import DropdownButton from 'react-bootstrap/DropdownButton'
+import Dropdown from 'react-bootstrap/Dropdown'
 import Popup from 'react-popup';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
@@ -15,8 +18,12 @@ export default class CustomerView extends Component {
       this.state = { 
         prods: [],
         search:"",
-        quantity:0
+        quantity:0,
+        rating:0,
+        review:""
       };
+      this.onChangeRating = this.onChangeRating.bind(this);
+      this.onChangeReview= this.onChangeReview.bind(this);
 
     }
     
@@ -38,6 +45,12 @@ export default class CustomerView extends Component {
 
   onchange = e =>{
     this.setState({search : e.target.value});
+  }
+  onChangeRating(event) {
+    this.setState({ rating: event.target.value });
+  }
+  onChangeReview(event) {
+    this.setState({ review: event.target.value });
   }
 
   editorder(e){
@@ -74,6 +87,60 @@ export default class CustomerView extends Component {
       alert("Invalid Quantity")
     }
   }
+
+  ratereviewvendor(e){
+    const newProd = {
+      username:e.username,
+      rating:this.state.rating,
+      review:this.state.review,
+      seller:e.seller,
+    };
+    console.log(newProd);
+
+    axios
+      .post("http://localhost:4000/ratereviewvendor", newProd)
+      .then(response => {
+        // this.setState({ prods: response.data });
+        if(response.data == "1")
+          alert("Order success!")
+        console.log(response.data);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+
+    this.setState({
+      rating:"",
+      review:""
+    })
+  }
+  ratereviewproduct(e){
+    const newProd = {
+      productid:e.productid,
+      rating:this.state.rating,
+      review:this.state.review,
+      seller:e.seller,
+    };
+    console.log(newProd);
+
+    axios
+      .post("http://localhost:4000/ratereviewproduct", newProd)
+      .then(response => {
+        // this.setState({ prods: response.data });
+        if(response.data == "1")
+          alert("Order success!")
+        console.log(response.data);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+
+    this.setState({
+      rating:"",
+      review:""
+    })
+  }
+  
 
   render() {
     return (
@@ -125,6 +192,18 @@ export default class CustomerView extends Component {
                   { p.status === "Waiting" && <td className="del-cell">
                   <Button variant="info" className="btn btn-primary" value="edit" onClick={()=>{this.editorder(p);}}>Edit</Button>
                   </td>}
+                  { p.status === "Placed" && <td className="del-cell">
+                    <Button variant="warning" className="btn btn-primary" value="edit" onClick={()=>{this.ratereviewvendor(p);}}>Vendor</Button>
+                    </td>}
+                  {p.status === "Placed" && <input type="Number"  style={{width:50,marginRight:10}} onChange={this.onChangeRating}/>}
+                  {p.status === "Placed" && <input type="Text" onChange={this.onChangeReview} />}
+
+
+                  { p.status === "Dispatched" && <td className="del-cell">
+                    <Button variant="warning" className="btn btn-primary" value="edit" onClick={()=>{this.ratereviewproduct(p);}}>Product</Button>
+                    </td>}
+                  {p.status === "Dispatched" && <input type="Number"  style={{width:50,marginRight:10}} onChange={this.onChangeRating}/>}
+                  {p.status === "Dispatched" && <input type="Text" onChange={this.onChangeReview} />}
                 </tr>
               );
             })}

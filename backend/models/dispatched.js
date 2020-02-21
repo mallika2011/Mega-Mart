@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
 const Dispatched = new mongoose.Schema({
+    productid:{
+        type:String
+    },
     seller: {
         type: String,
         required: true
