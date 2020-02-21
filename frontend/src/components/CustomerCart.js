@@ -116,6 +116,7 @@ export default class CustomerView extends Component {
   }
   ratereviewproduct(e){
     const newProd = {
+      productname:e.productname,
       productid:e.productid,
       rating:this.state.rating,
       review:this.state.review,
@@ -195,15 +196,15 @@ export default class CustomerView extends Component {
                   { p.status === "Placed" && <td className="del-cell">
                     <Button variant="warning" className="btn btn-primary" value="edit" onClick={()=>{this.ratereviewvendor(p);}}>Vendor</Button>
                     </td>}
-                  {p.status === "Placed" && <input type="Number"  style={{width:50,marginRight:10}} onChange={this.onChangeRating}/>}
-                  {p.status === "Placed" && <input type="Text" onChange={this.onChangeReview} />}
+                  {p.status === "Placed" && <input placeholder="rate" type="Number"  style={{width:60,marginRight:10, marginTop:15}} onChange={this.onChangeRating}/>}
+                  {p.status === "Placed" && <input placeholder="Write a review ..." type="Text" onChange={this.onChangeReview} />}
 
 
                   { p.status === "Dispatched" && <td className="del-cell">
                     <Button variant="warning" className="btn btn-primary" value="edit" onClick={()=>{this.ratereviewproduct(p);}}>Product</Button>
                     </td>}
-                  {p.status === "Dispatched" && <input type="Number"  style={{width:50,marginRight:10}} onChange={this.onChangeRating}/>}
-                  {p.status === "Dispatched" && <input type="Text" onChange={this.onChangeReview} />}
+                  {p.status === "Dispatched" && <input placeholder="Rate" type="Number"  style={{width:60,marginRight:10, marginTop:15}} onChange={this.onChangeRating}/>}
+                  {p.status === "Dispatched" && <input placeholder="Write a review ..." type="Text" onChange={this.onChangeReview} />}
                 </tr>
               );
             })}

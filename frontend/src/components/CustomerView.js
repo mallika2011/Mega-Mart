@@ -17,9 +17,11 @@ export default class CustomerView extends Component {
       super(props);
       this.state = { 
         prods: [],
+        review:[],
         search:"",
         quantity:0,
-        type:"price"
+        type:"price",
+        showreviews:false
       };
 
       this.sort=this.sort.bind(this);
@@ -38,14 +40,10 @@ export default class CustomerView extends Component {
     axios
       .post("http://localhost:4000/showavailableprods",t)
       .then(response => {
-        console.log("success1", response.data)
         axios
               .post("http://localhost:4000/addrating",response.data)
               .then(response2 => {
-              console.log("success2")
-
                 this.setState({ prods: response2.data })
-                console.log("data",response2.data)
               })
               .catch(function(error) {
                 console.log(error);
@@ -65,6 +63,22 @@ export default class CustomerView extends Component {
   }
   sort=(s)=>{
     this.componentDidMount();
+  }
+
+  getreview=(s)=>{
+    alert("nice")
+    const temp={
+      username:s.username
+    }
+    axios
+      .post("http://localhost:4000/getvendorreview", temp)
+      .then(response => {
+        this.setState({ review: response.data,showreviews:true})
+        console.log(response.data);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   addtoccart(e){
@@ -157,7 +171,7 @@ export default class CustomerView extends Component {
                 <tr>
                   <td>{p.productname}</td>
                   <td>{p.price}</td>
-                  <td>{p.username}</td>
+                  <td onClick={()=>{this.getreview(p);}}>{p.username}</td>
                   <td>{p.rating}</td>
                   <td>{p.quantity_remaining}</td>
                   <td className="del-cell">
@@ -168,6 +182,35 @@ export default class CustomerView extends Component {
             })}
           </tbody>
         </table>
+        
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+
+        
+        { this.state.showreviews && <table className="table table-striped">
+          <thead>
+            <tr>
+              <th>Vendor</th>
+              <th>Vendor Reviews</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.review.map((ven, i) => {
+              return (
+                <tr>
+                  <td>{ven.username}</td>
+                  <td>{ven.review}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>}
+
+
+
+
       </div>
     );
   }

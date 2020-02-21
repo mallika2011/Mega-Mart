@@ -440,37 +440,50 @@ Routes.route("/ratereviewvendor").post(function(req, res) {
 });
 
 Routes.route("/ratereviewproduct").post(function(req, res) {
-    console.log("change",req.body)
-    var myquery = { productid: req.body.productid};
-    var newvalues = { $set: {rating: req.body.rating, review:req.body.review} };
-    Dispatched.updateOne(myquery, newvalues, function(err, resp) {
-        if (err) throw err;
-        console.log(" Updated rating and review", resp);
-        res.json(resp)
-    });
+    let prodrat = new Dispatched(req.body);
+    prodrat.save()
+        .then(user => {
+            res.status(200).json({ Product: "Rating added successfully" });
+        })
+        .catch(err => {
+            res.status(400).send("Error");
+        });
 });
 
 Routes.route("/addrating").post(function(req, res) {
     console.log(req.body)
     var prod = req.body
-    var ret=0
-    var itemsProcessed = 0;
-    prod.forEach((element,callback) => {
-        element["rating"]=4
-        // User.find({ username: element.username}, function(err, users) {
-        //     console.log("userrr", users)
-        //     if (err)
-        //         console.log(err);
-        //     else {
-        //         if (!users) {
-        //         } else
-        //         console.log(users.rating)
-        //         element["rating"]=users.rating;
-        //         // itemsProcessed++;               
-        //     }
-        // });
-    });    
-    res.json(prod);
+    var final = [];
+    var counter = 0;
+    for(const element of prod) {
+        User.findOne({ username: element.username}, function(error, result) {
+            element["rating"]=result.rating
+            final.push(element);
+            if(counter == prod.length - 1) {
+                res.json(final);
+            }
+            counter++;
+        })
+    }
+
+});
+
+Routes.route("/getvendorreview").post(function(req, res) {
+    User.find({ username: req.body.username }, function(err, p) {
+        if (err)
+            console.log(err);
+        else {
+            if (!p.length) {
+                //Not found
+                console.log("No Products");
+                res.json(p);
+            } 
+            else {
+                res.json(p);
+            }
+        }
+    });
+
 });
 
 
