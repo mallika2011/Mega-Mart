@@ -18,6 +18,11 @@ export default class VendorViewAll extends Component {
       const newUser = {
         username: localStorage.getItem("username")
       };
+      if(localStorage.getItem("type")!=="vendor")
+      {
+        alert("You do not have permission to access this page")
+        this.props.history.push("/");
+      }
       // this.setState({ username: newUser.username });
       axios
         .post("http://localhost:4000/viewVendorProduct", newUser)

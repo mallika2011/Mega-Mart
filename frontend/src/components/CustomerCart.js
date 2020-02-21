@@ -31,6 +31,11 @@ export default class CustomerView extends Component {
       const x = {
         username: localStorage.getItem("username")
       };
+      if(localStorage.getItem("type")!=="customer")
+      {
+        alert("You do not have permission to access this page")
+        this.props.history.push("/");
+      }
       // this.setState({ username: newUser.username });
       axios
         .post("http://localhost:4000/showmyproducts",x)
