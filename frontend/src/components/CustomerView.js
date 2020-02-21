@@ -20,7 +20,7 @@ export default class CustomerView extends Component {
         review:[],
         search:"",
         quantity:0,
-        type:"price",
+        type:"",
         showreviews:false
       };
 
@@ -29,16 +29,12 @@ export default class CustomerView extends Component {
 
     }
       
-  componentDidMount(x) {
+  componentDidMount() {
     const newUser = {
       username: localStorage.getItem("username")
     };
-    const t = {
-      type:this.state.type
-    };
-    console.log("inmount",x);
     axios
-      .post("http://localhost:4000/showavailableprods",t)
+      .get("http://localhost:4000/showavailableprods")
       .then(response => {
         axios
               .post("http://localhost:4000/addrating",response.data)
@@ -54,19 +50,35 @@ export default class CustomerView extends Component {
       });
   }
   onChangeType(event) {
-    console.log("inonchange",event.target.value)
     this.setState({ type: event.target.value });
-    this.componentDidMount(event.target.value)
   }
   onchange = e =>{
     this.setState({search : e.target.value});
   }
   sort=(s)=>{
-    this.componentDidMount();
+    const t = {
+      type:this.state.type
+    };
+    console.log("sending ",t.type)
+    axios
+      .post("http://localhost:4000/sortshowavailableprods",t)
+      .then(response => {
+        axios
+              .post("http://localhost:4000/addrating",response.data)
+              .then(response2 => {
+                this.setState({ prods: response2.data })
+              })
+              .catch(function(error) {
+                console.log(error);
+              });
+              })
+      .catch(function(error) {
+        console.log(error);
+      });
+    // this.componentDidMount();
   }
 
   getreview=(s)=>{
-    alert("nice")
     const temp={
       username:s.username
     }

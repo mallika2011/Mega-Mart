@@ -54,6 +54,21 @@ Routes.route("/showdispatchedProducts").get(function(req, res) {
     });
 });
 
+//Show all available products to customer
+Routes.route("/showavailableprods").get(function(req, res) {
+    let s="price"
+    console.log("default")
+    var mysort = {s:1};
+    Products.find().sort(s).exec(function(err, p) {
+        if (err)
+            console.log(err);
+        else {
+            console.log(p);
+            res.json(p);
+        }
+    });
+});
+
 
 //Vendor utility API
 Routes.route("/vendor").post(function(req, res) {
@@ -310,11 +325,17 @@ Routes.route("/showmyproducts").post(function(req, res) {
     });
 });
 
-//Show all available products to customer
-Routes.route("/showavailableprods").post(function(req, res) {
+
+
+Routes.route("/sortshowavailableprods").post(function(req, res) {
     let s=req.body.type
-    if(req.body.type)
-    {
+    if(!req.body.type)
+    {   
+        console.log("default")
+        s="price"
+    }
+    else
+        console.log(s)
         var mysort = {s:1};
         Products.find().sort(s).exec(function(err, p) {
             if (err)
@@ -324,17 +345,6 @@ Routes.route("/showavailableprods").post(function(req, res) {
                 res.json(p);
             }
         });
-    }
-    else{
-        Products.find(function(err, p) {
-            if (err)
-                console.log(err);
-            else {
-                console.log(p);
-                res.json(p);
-            }
-        });
-    }
 });
 
 //Add a customer product
