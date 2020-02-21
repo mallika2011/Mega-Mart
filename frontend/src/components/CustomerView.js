@@ -212,7 +212,7 @@ export default class CustomerView extends Component {
             {this.state.review.map((ven, i) => {
               return (
                 <tr>
-                  <td>{ven.username}</td>
+                  <td>{ven.seller}</td>
                   <td>{ven.review}</td>
                 </tr>
               );

@@ -479,7 +479,7 @@ Routes.route("/addrating").post(function(req, res) {
 });
 
 Routes.route("/getvendorreview").post(function(req, res) {
-    User.find({ username: req.body.username }, function(err, p) {
+    Dispatched.find({ seller: req.body.username }, function(err, p) {
         if (err)
             console.log(err);
         else {
