@@ -19,6 +19,9 @@ const Cart = new mongoose.Schema({
     },
     seller:{
         type:String
+    },
+    remaining:{
+        type:Number
     }
 });
 

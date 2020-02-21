@@ -44,7 +44,7 @@ Routes.route("/").get(function(req, res) {
 });
 
 Routes.route("/showdispatchedProducts").get(function(req, res) {    
-    Dispatched.find(function(err, disp) {
+    Dispatched.find({ rating: { $ne: 0 } },function(err, disp) {
         if (err)
             console.log(err);
         else {
@@ -319,7 +319,26 @@ Routes.route("/showmyproducts").post(function(req, res) {
                 res.json(p);
             } 
             else {
-                res.json(p);
+                var final = [];
+                var counter = 0;
+                for(const element of p) {
+                    Products.findOne({ _id: element.productid}, function(error, result) {
+                        if(!result)
+                        {
+                            element.remaining=0
+                        }
+                        else
+                        {
+                            element.remaining=result.quantity
+                        }
+                        final.push(element);
+                        if(counter == p.length - 1) {
+                            console.log("final", final)
+                            res.json(final);
+                        }
+                        counter++;
+                    })
+                }
             }
         }
     });
@@ -479,7 +498,7 @@ Routes.route("/addrating").post(function(req, res) {
 });
 
 Routes.route("/getvendorreview").post(function(req, res) {
-    Dispatched.find({ seller: req.body.username }, function(err, p) {
+    Dispatched.find({ seller: req.body.username,review: { $ne: "" } }, function(err, p) {
         if (err)
             console.log(err);
         else {
