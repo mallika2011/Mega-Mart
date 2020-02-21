@@ -329,7 +329,7 @@ Routes.route("/showmyproducts").post(function(req, res) {
                         }
                         else
                         {
-                            element.remaining=result.quantity
+                            element.remaining=result.quantity_remaining
                         }
                         final.push(element);
                         if(counter == p.length - 1) {
