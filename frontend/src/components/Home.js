@@ -45,7 +45,9 @@ export default class Home extends Component {
         </nav>
         <br/>
         <br/>
-        <h1>HOMEPAGE</h1>
+        <div style={{backgroundColor:"#c6f1d6", padding:100, textAlign:"center"}}>
+        <h1>Welcome to MegaMart!</h1>
+        </div>
       </div>
     );
   }

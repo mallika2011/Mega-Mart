@@ -54,35 +54,9 @@ export default class VendorHome extends Component {
         <br/>
         <br/>
 
+        <div style={{backgroundColor:"#e0f5b9", padding:100, textAlign:"center"}}>
         <h1>Welcome {this.state.data.fullname} !</h1>
-
-        {/* <table className="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Full Name</th>
-                            <th>Email</th>
-                            <th>Username</th>
-                            <th>Password</th>
-                            <th>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    { 
-                        this.state.users.map((currentUser, i) => {
-                            return (
-                                <tr>
-                                    <td>{currentUser.fullname}</td>
-                                    <td>{currentUser.email}</td>
-                                    <td>{currentUser.username}</td>
-                                    <td>{currentUser.password}</td>
-                                    <td>{currentUser.type}</td>
-
-                                </tr>
-                            )
-                        })
-                    }
-                    </tbody>
-                </table> */}
+        </div>
       </div>
     );
   }

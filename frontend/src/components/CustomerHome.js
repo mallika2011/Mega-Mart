@@ -53,7 +53,10 @@ export default class VendorHome extends Component {
         <br/>
         <br/>
 
+        
+        <div style={{backgroundColor:"#ff8080", padding:100, textAlign:"center"}}>
         <h1>Welcome {this.state.data.fullname} !</h1>
+        </div>
       </div>
     );
   }
