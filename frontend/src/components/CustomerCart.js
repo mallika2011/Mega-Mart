@@ -196,15 +196,15 @@ export default class CustomerView extends Component {
                   { p.status === "Placed" && <td className="del-cell">
                     <Button variant="warning" className="btn btn-primary" value="edit" onClick={()=>{this.ratereviewvendor(p);}}>Vendor</Button>
                     </td>}
-                  {p.status === "Placed" && <input placeholder="rate" type="Number"  style={{width:60,marginRight:10, marginTop:15}} onChange={this.onChangeRating}/>}
-                  {p.status === "Placed" && <input placeholder="Write a review ..." type="Text" onChange={this.onChangeReview} />}
+                  {p.status === "Placed" && <input placeholder="rate" type="Number"  min="1" max="5" style={{width:60,marginRight:10, marginTop:15, borderRadius: 5}} onChange={this.onChangeRating}/>}
+                  {p.status === "Placed" && <input placeholder="Write a review ..." style={{borderRadius: 5}} type="Text" onChange={this.onChangeReview} />}
 
 
                   { p.status === "Dispatched" && <td className="del-cell">
                     <Button variant="warning" className="btn btn-primary" value="edit" onClick={()=>{this.ratereviewproduct(p);}}>Product</Button>
                     </td>}
-                  {p.status === "Dispatched" && <input placeholder="Rate" type="Number"  style={{width:60,marginRight:10, marginTop:15}} onChange={this.onChangeRating}/>}
-                  {p.status === "Dispatched" && <input placeholder="Write a review ..." type="Text" onChange={this.onChangeReview} />}
+                  {p.status === "Dispatched" && <input placeholder="Rate" type="Number"  min="1" max="5" style={{width:60,marginRight:10, marginTop:15, borderRadius: 5}} onChange={this.onChangeRating}/>}
+                  {p.status === "Dispatched" && <input placeholder="Write a review ..." style={{borderRadius: 5}}type="Text" onChange={this.onChangeReview} />}
                 </tr>
               );
             })}
