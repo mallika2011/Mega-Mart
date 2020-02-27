@@ -13,6 +13,8 @@ A web app built using MERN for bulk orders for vendors and customers.
 
 ```bash
     cd backend
+    npm install
+    npm install express
     nodemon sever.js
 ```
 
@@ -20,6 +22,7 @@ A web app built using MERN for bulk orders for vendors and customers.
 
 ```bash
     cd ../frontend
+    npm install
     npm start
 ```
 
@@ -27,6 +30,13 @@ A web app built using MERN for bulk orders for vendors and customers.
 
 ```bash
     mongo
+```
+
+CAUTION : If the ports are already being used by some other processes, they must be killed before running the above script
+
+```bash
+    ps aux | grep <node/mongo>
+    kill -9 <PID>
 ```
 
 Your App should be up and running on http://localhost:3000/
